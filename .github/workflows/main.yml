@@ -22,7 +22,7 @@ jobs:
         run: mkdir -p output
 
       - name: Run generator script
-        run: php scripts/generate.php
+        run: php ../scripts/generate.php
 
       - name: Commit and push if changed
         run: |
