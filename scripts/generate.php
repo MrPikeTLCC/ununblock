@@ -1,13 +1,15 @@
 <?php
-	$cacheFile = "cache.txt";
-	$cacheTime = 3600; // seconds (1 hour)
-	
-	// If cache exists and is fresh → serve it and exit
-	if (file_exists($cacheFile) && (time() - filemtime($cacheFile)) < $cacheTime) {
-	    header("Content-Type: text/plain");
-	    readfile($cacheFile);
-	    exit;
-	}
+$cacheFile = "output/unblocked_edl.txt";
+
+$cachedDomains = [];
+
+if (file_exists($cacheFile)) {
+    $cachedLines = file($cacheFile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+    foreach ($cachedLines as $line) {
+        $cachedDomains[trim($line)] = true;
+    }
+}
+
 
 
 	$sources = array(
@@ -40,10 +42,6 @@
 		switch($src["method"]){
 			case "md-li":	// Markdown List
 				
-				if ($content === false) {
-				    die("Failed to fetch gist");
-				}
-				
 				// Split into lines
 				$lines = explode("\n", $content);
 				
@@ -69,12 +67,19 @@
 			break;
 		}
 	}
+
+	// Merge cached + new
+	$domains = array_merge($cachedDomains, $domains);
 	
 	// Sort domains
 	$cleanList = array_keys($domains);
 	sort($cleanList);
 	
 	// Build output string
+	if (!is_dir("output")) {
+    	mkdir("output", 0755, true);
+	}
+
 	$output = implode("\n", $cleanList) . "\n";
 
 	file_put_contents("output/unblocked_edl.txt", $output);
