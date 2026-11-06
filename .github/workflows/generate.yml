@@ -5,7 +5,7 @@ name: Update EDL
 
 on:
   schedule:
-    - cron: "0 * * * *"   # every hour
+    - cron: "0 0 * * *"   # midnight every day
   workflow_dispatch:       # allow manual run
 
 jobs:
